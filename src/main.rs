@@ -47,21 +47,17 @@ fn get_creation_date_as_string(path: &Path) -> Option<String> {
             Ok(time) => match time.duration_since(UNIX_EPOCH) {
                 Ok(duration) => Some(duration.as_secs().to_string()),
                 Err(e) => {
-                    eprintln!("Error calculando timestamp para {}: {}", path.display(), e);
+                    eprintln!("Error calculating timestamp for {}: {}", path.display(), e);
                     None
                 }
             },
             Err(e) => {
-                eprintln!(
-                    "Error obteniendo fecha de creación para {}: {}",
-                    path.display(),
-                    e
-                );
+                eprintln!("Error getting creation date for {}: {}", path.display(), e);
                 None
             }
         },
         Err(e) => {
-            eprintln!("Error obteniendo metadatos para {}: {}", path.display(), e);
+            eprintln!("Error getting metadata for {}: {}", path.display(), e);
             None
         }
     }
@@ -81,11 +77,7 @@ fn generate_new_filename(path: &Path, timestamp: &str) -> PathBuf {
 }
 
 fn rename_file(old_path: &Path, new_path: &Path) -> Result<(), io::Error> {
-    println!(
-        "Renombrando: {} -> {}",
-        old_path.display(),
-        new_path.display()
-    );
+    println!("Renaming: {} -> {}", old_path.display(), new_path.display());
     fs::rename(old_path, new_path)
 }
 
@@ -97,7 +89,7 @@ fn main() -> Result<(), io::Error> {
         "./wallpapers".to_string()
     };
 
-    println!("Procesando archivos en: {}", wallpaper_folder);
+    println!("Processing files in: {}", wallpaper_folder);
 
     let mut modified_count = 0;
 
@@ -110,25 +102,22 @@ fn main() -> Result<(), io::Error> {
 
                         match rename_file(&file_path, &new_path) {
                             Ok(_) => {
-                                println!("✓ Renombrado: {}", file_path.display());
+                                println!("✓ Renamed: {}", file_path.display());
                                 modified_count += 1;
                             }
                             Err(e) => {
-                                eprintln!("✗ Error al renombrar {}: {}", file_path.display(), e);
+                                eprintln!("✗ Error renaming {}: {}", file_path.display(), e);
                             }
                         }
                     }
                 }
             }
 
-            println!(
-                "\nProceso completado: {} archivo(s) renombrado(s)",
-                modified_count
-            );
+            println!("\nProcess completed: {} file(s) renamed", modified_count);
             Ok(())
         }
         Err(e) => {
-            eprintln!("Error al leer la carpeta de fondos de pantalla: {}", e);
+            eprintln!("Error reading wallpaper folder: {}", e);
             Err(e)
         }
     }
